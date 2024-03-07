@@ -1,22 +1,27 @@
 import numpy as np
-def prob(v , d, b, cp):
-    p=1
-    # print(d)
-    # print(v)
-    for i in range(0,len(v)):
-        if i == 1 and b[i] in d:
-            p = p*d[b[i]]
-            # print(d[b[i]])
-        elif b[i]  in d:
-            p=p*(1-d[b[i]])
-    #         print(d[b[i]])
-    #     print(p)
-    #     print(b[i])
-    #     print("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
-    # print("done")
-    return p
-
-
+def add_dict(b,w,dN,dP,cn,cp):
+    a=np.array(w.split()[1:])
+    a= np.unique(a) #gets rid of fuplicates in the review because we are checking if its in a neg rev not hoe many times its in the review
+    b=np.append(b,a)
+    if w[0]=='1':
+        cp+=1
+        for j in a:
+            if j not in dP:
+                dP.update({j:1})
+            else:
+                dP.update({j:dP[j]+1})   
+            if j not in dN:
+                dN.update({j:0}) #this adds to the table a 0 basically we havent seen it in the negative side but we have seen it in the positve
+    else:
+        for k in a:
+            if k not in dN:
+                dN.update({k:1})
+            else:
+                dN.update({k:dN[k]+1}) 
+            if k not in dP:
+                dP.update({k:0}) #this adds to the table a 0 basically we havent seen it in the positive side but we have seen it in the negative
+        cn+=1
+    return cn, cp, dN,dP,b
 file1 = open("simple-food-reviews.txt")
 words = file1.readline()[:-1] 
 reviews = np.array([])
@@ -31,73 +36,49 @@ bags=np.array([])
 dictP={}
 dictN={}
 
-for i in range(12):
-    a=np.array(reviews[i].split()[1:])
-    a= np.unique(a)
-    bags=np.append(bags,a)
-    
-    if reviews[i][0]=='1':
-        countp+=1
-        for j in a:
-            if j not in dictP:
-                dictP.update({j:1})
-            else:
-                dictP.update({j:dictP[j]+1})    
-    else:
-        for k in a:
-            if k not in dictN:
-                dictN.update({k:1})
-            else:
-                dictN.update({k:dictN[k]+1}) 
-        countn+=1
-print(dictN)
-print(dictP)
-for k in dictP:
-    dictP.update({k:dictP[k]/countp})
-
-for k in dictN:
-    dictN.update({k:dictN[k]/countn})
-# print(bags)
+for i in range(18): #gets the first 12 
+    countn, countp, dictN,dictP ,bags= add_dict(bags,reviews[i],dictN,dictP,countn,countp)
+#this sets the probabilty of each word for out class conditional model
 bags= np.unique(bags)
+print(len(reviews))
 priorP=countp/(countp+countn)
 priorN=countn/(countp+countn)
-for j in range(12,13):
+#now we are done creating the prior and the class conditional model
+#we need to create the encoder 
+ce=0
+for j in range(18,len(reviews)-1):
+    ce+=1
     words = reviews[j]
     rev= words.split(" ")
-    # print(bags)
-    # print('h')
-    # print(rev)
     vec = np.zeros(len(bags))
-    # print(rev[1])
-    # an = np.where(bags == rev[1])
-    # print(len(an[0]))
-    # print(an[0])
-    lap ={}
+    lap = {}
+    #this is where we are doing the encoding
     for i in range(1,len(rev)):
-        # print(rev[i])
-        an = np.where(bags == rev[i])[0]
-        if len(an) ==0:
-            print("hello")
+        an = np.where(bags == rev[i])[0] #thischecks and finds the index where a word is in bag 
+        if len(an) !=0: #if the word is in bags the add 1 to the the vector of the string
+            vec[an[0]]+=1
+        else:# if its not , this is the word we will need to do laplace on
+            pass
+    # print(lap)
+    # now we are trying to find the product of the probabilities
+    probn=1
+    probp=1
+    for i in range(0,len(vec)): ## This is without laplace smoothing we will do that out side the for loop
+        if vec[i] == 0:
+            probn = probn *(1- (dictN[bags[i]]+1 )/countn+2)
+            probp = probp*(1- (dictP[bags[i]]+1)/countp+2)
         else:
-            for k in an:
-                vec[k]+=1
-    # print(vec)
-    # print(dictP)
-    # print(bags)
-                
-    npr= prob(vec, dictN, bags,countn)
-    pp= prob(vec, dictP,bags,countp )
-    print(pp)
-    print(npr)
+            probn = probn *((dictN[bags[i]]+1 )/countn+2)
+            probp = probp *((dictP[bags[i]]+1)/countp+2)
+    prob_negative = (probn*priorN)/(probn*priorN + probp*priorP )
+    prob_positive = (probp*priorP)/(probn*priorN + probp*priorP )
+    
+    # print(dictN)
     print(words)
-    print(npr)
-    print(']]]]]]]]]]]]]]]]]]]]]]]]]]]')
-    print(pp)
-    print(words)
-    print(priorP*pp)
-    print(priorN*npr)
-    p= (priorN*npr)/(priorN*npr + priorP*pp)
-    print(p)
-
-
-
+    print("This is the probability that the review is negative ",prob_negative)
+    print("This is the probability that the review is positive ",prob_positive)
+    countn, countp, dictN,dictP ,bags= add_dict(bags,words,dictN,dictP,countn,countp)
+    priorP=countp/(countp+countn)
+    priorN=countn/(countp+countn)
+    bags= np.unique(bags)
+print(ce)
