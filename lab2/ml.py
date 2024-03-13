@@ -68,8 +68,8 @@ wrongP = 0
 wrongN = 0
 
 
-for j in range(6): #for each of the last 6 reviews
-    review = reviews[17-j]
+for j in range(12, len(reviews)): #for each of the last 6 reviews
+    review = reviews[j]
     reviewWords= review.split(" ")
     vec = np.zeros(len(bag))
 
@@ -101,8 +101,8 @@ for j in range(6): #for each of the last 6 reviews
     prob_negative = (probn * priorN)/(probn * priorN + probp * priorP)
     prob_positive = (probp * priorP)/(probn * priorN + probp * priorP)
 
-    print(reviewWords)
-    print(prob_negative, prob_positive)
+    # print(reviewWords)
+    # print(prob_negative, prob_positive)
     
     if reviewWords[0]=="-1":
 
@@ -116,23 +116,18 @@ for j in range(6): #for each of the last 6 reviews
             correctP += 1
         elif prob_negative > prob_positive:
             wrongP += 1     
-
-print("####################################")
-# print(correctN, correctP)
-# print(wrongN, wrongP)
-
+    bag, dictNegativeWords,dictPositiveWords, countNegativeReviews, countPositiveReviews = add_dict(bag,review,dictNegativeWords,dictPositiveWords,countNegativeReviews,countPositiveReviews)
+    priorP=countPositiveReviews/(countPositiveReviews+countNegativeReviews)
+    priorN=countNegativeReviews/(countPositiveReviews+countNegativeReviews)
+    bag= np.unique(bag)
 confusionMatrix = np.array([[correctN, wrongP],[wrongN,correctP]])
 
 print(confusionMatrix)
 accuracy  = (correctN +correctP)/(correctP+ correctN +wrongN + wrongP)
 print("Accuracy: " , accuracy)
-
     # check if the review is positive
 
     
 
 
-    # countNegativeReviews, countPositiveReviews, dictNegativeWords,dictPositiveWords ,bag= add_dict(bag,review,dictNegativeWords,dictPositiveWords,countNegativeReviews,countPositiveReviews)
-    # priorP=countPositiveReviews/(countPositiveReviews+countNegativeReviews)
-    # priorN=countNegativeReviews/(countPositiveReviews+countNegativeReviews)
-    # bag= np.unique(bag)
+
