@@ -1,10 +1,12 @@
 import numpy as np
+nono = np.array(["as","the","was","a","is","and","this","at"])
 
 def add_dict(bag,review,dictN,dictP,countN,countP):
 
     reviewWords =np.array(review.split()[1:])
     reviewWords = np.unique(reviewWords) #gets rid of duplicates in the review bagecause we are checking if its in a neg rev not hoe many times its in the review
     bag=np.append(bag,reviewWords)
+    a = np.setdiff1d(a,nono)
     if review[0]=='1':
         countP+=1
         for j in reviewWords:
@@ -94,10 +96,6 @@ for j in range(6): #for each of the last 6 reviews
     print(review)
     print(priorN,priorP)
     print(prob_negative, prob_positive)
-
-    
-
- 
     # countNegativeReviews, countPositiveReviews, dictNegativeWords,dictPositiveWords ,bag= add_dict(bag,review,dictNegativeWords,dictPositiveWords,countNegativeReviews,countPositiveReviews)
     # priorP=countPositiveReviews/(countPositiveReviews+countNegativeReviews)
     # priorN=countNegativeReviews/(countPositiveReviews+countNegativeReviews)
