@@ -5,8 +5,9 @@ def add_dict(bag,review,dictN,dictP,countN,countP):
 
     reviewWords =np.array(review.split()[1:])
     reviewWords = np.unique(reviewWords) #gets rid of duplicates in the review bagecause we are checking if its in a neg rev not hoe many times its in the review
-    bag=np.append(bag,reviewWords)
     reviewWords = np.setdiff1d(reviewWords,nono)
+    bag=np.append(bag,reviewWords)
+
     if review[0]=='1':
         countP+=1
         for j in reviewWords:
