@@ -61,11 +61,17 @@ priorN=countNegativeReviews/(countPositiveReviews+countNegativeReviews)
 #we need to create the encoder
 #Starting to test 
 # print(bag)
+correctP = 0
+correctN = 0
+wrongP = 0
+wrongN = 0
+
+
 for j in range(6): #for each of the last 6 reviews
     review = reviews[17-j]
     reviewWords= review.split(" ")
     vec = np.zeros(len(bag))
-   
+
     #this is where we are doing the encoding
     for i in range(1,len(reviewWords)):
         wordIndex = np.where(bag == reviewWords[i])[0] #this checks and finds the indexes where a word is in bag 
@@ -77,7 +83,7 @@ for j in range(6): #for each of the last 6 reviews
     # now we are trying to find the product of the probabilities    
     probn=1
     probp=1
-   
+
 #1) code for what happens for when input has more than one instance of the word
 #2) code for zero probabilities 
 #3) remind niggas that we need to use some data for testing and the other for training 
@@ -91,11 +97,40 @@ for j in range(6): #for each of the last 6 reviews
         else:
             probn = probn *((dictNegativeWords[bag[i]]+1)/countNegativeReviews+2)
             probp = probp *((dictPositiveWords[bag[i]]+1)/countPositiveReviews+2)
-    prob_negative = (probn*priorN)/(probn*priorN + probp*priorP )
-    prob_positive = (probp*priorP)/(probn*priorN + probp*priorP )
-    print(review)
-    print(priorN,priorP)
+    prob_negative = (probn * priorN)/(probn * priorN + probp * priorP)
+    prob_positive = (probp * priorP)/(probn * priorN + probp * priorP)
+
+    print(reviewWords)
     print(prob_negative, prob_positive)
+    
+    if reviewWords[0]=="-1":
+
+        if prob_negative > prob_positive:
+            correctN +=1
+        elif prob_positive > prob_negative:
+            wrongN +=1;  
+    elif reviewWords[0]=="1": 
+
+        if prob_positive > prob_negative:
+            correctP += 1
+        elif prob_negative > prob_positive:
+            wrongP += 1     
+
+print("####################################")
+# print(correctN, correctP)
+# print(wrongN, wrongP)
+
+confusionMatrix = np.array([[correctN, wrongP],[wrongN,correctP]])
+
+print(confusionMatrix)
+accuracy  = (correctN +correctP)/(correctP+ correctN +wrongN + wrongP)
+print("Accuracy: " , accuracy)
+
+    # check if the review is positive
+
+    
+
+
     # countNegativeReviews, countPositiveReviews, dictNegativeWords,dictPositiveWords ,bag= add_dict(bag,review,dictNegativeWords,dictPositiveWords,countNegativeReviews,countPositiveReviews)
     # priorP=countPositiveReviews/(countPositiveReviews+countNegativeReviews)
     # priorN=countNegativeReviews/(countPositiveReviews+countNegativeReviews)
