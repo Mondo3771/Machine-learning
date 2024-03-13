@@ -1,25 +1,20 @@
-import matplotlib.pyplot as plt
-import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
-# x-coordinates of left sides of bars 
-left = [1, 2, 3, 4, 5]
+# Load the data
+data_input = pd.read_csv('banknote_authentication.csv')
 
-# heights of bars
-height = [10, 24, 36, 40, 5]
+# Convert the data to a NumPy array
+X = data_input.to_numpy()
 
-# labels for bars
-tick_label = ['one', 'two', 'three', 'four', 'five']
+# Print the shape of the data
+data = np.array(X[0][0].split(';'))
+for i in range(1, len(X)):
+    data = np.vstack((data,np.array(X[i][0].split(';'))))
+print(data)
 
-# plotting a bar chart
-plt.bar(left, height, tick_label = tick_label,
-		width = 0.8, color = ['red', 'green'])
-
-# naming the x-axis
-plt.xlabel('x - axis')
-# naming the y-axis
-plt.ylabel('y - axis')
-# plot title
-plt.title('My bar chart!')
-
-# function to show the plot
-plt.show()
+x_values=np.array(data[:,:3])
+y_values=np.array(data[:,-1])
+print(x_values)
+print(y_values)
+# Output: (100, 5)
