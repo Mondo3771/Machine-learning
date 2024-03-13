@@ -47,7 +47,7 @@ dictNegativeWords={} #holds all words found in negative reviews and how many tim
 
 
 # Training data uses first 12 reviews 
-for i in range(12): 
+for i in range(60): 
     bag, dictNegativeWords, dictPositiveWords,countNegativeReviews, countPositiveReviews = add_dict(bag,reviews[i],dictNegativeWords,dictPositiveWords,countNegativeReviews,countPositiveReviews)
 #this sets the probabilty of each word for out class conditional model
 
@@ -68,8 +68,8 @@ wrongP = 0
 wrongN = 0
 
 
-for j in range(6): #for each of the last 6 reviews
-    review = reviews[17-j]
+for j in range(60,len(reviews)): #for each of the last 6 reviews
+    review = reviews[j]
     reviewWords= review.split(" ")
     vec = np.zeros(len(bag))
 
@@ -83,12 +83,7 @@ for j in range(6): #for each of the last 6 reviews
     
     # now we are trying to find the product of the probabilities    
     probn=1
-    probp=1
-
-#1) code for what happens for when input has more than one instance of the word
-#2) code for zero probabilities 
-#3) remind niggas that we need to use some data for testing and the other for training 
-#4)Should training data change with new test data (no)       
+    probp=1   
 
 
     for i in range(0,len(vec)): ## This is without laplace smoothing we will do that out side the for loop
