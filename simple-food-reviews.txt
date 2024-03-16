@@ -80,9 +80,9 @@
 1 I enjoyed the experience at the restaurant, and this is a great restaurant.
 1 The food, the service, and the restaurant were great.
 1 I enjoyed my food, and the food is lovely.
--1 Avoid this restaurant, and the service is terrible.
--1 We had a terrible experience, and the food was really bad.
--1 The service and the food were terrible, and the food tasted awful.
--1 This is a bad restaurant, and avoid the food.
--1 The meal was terrible.
+-1 Avoid this restaurant, and the service is terrible
+-1 We had a terrible experience, and the food was really bad
+-1 The service and the food were terrible, and the food tasted awful
+-1 This is a bad restaurant, and avoid the food
+-1 The meal was terrible
 n
