@@ -30,11 +30,13 @@ def add_dict(bag,review,dictN,dictP,countN,countP):
 
 file1 = open("simple-food-reviews.txt")
 review = file1.readline()[:-1] 
+review = review.lower()
 reviews = np.array([])
 
 while len(review) != 0:
     reviews = np.append(reviews,review)
     review = file1.readline()[:-1]
+    review= review.lower()
 
 np.random.shuffle(reviews) #shuffle to choose random reviews
 
@@ -121,7 +123,7 @@ print(confusionMatrix)
 accuracy  = (correctN +correctP)/(correctP+ correctN +wrongN + wrongP)
 print("Accuracy: " , accuracy)
     # check if the review is positive
-
+# print(bag)
     
 
 
