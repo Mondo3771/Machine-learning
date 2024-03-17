@@ -21,13 +21,12 @@ for i in range(1,8):
     words = books[i-1].split(" ")
     
     size = len(words)
-    wordsTraining = words[:round(size*0.8)] #first 80% of a book are reserved for testing
-    print()
+    wordsTraining = words[:round(size*1)] #first 80% of a book are reserved for testing
     dictionary = {} # initialise dictionary for each book
     numWords = 0
 
     for word in wordsTraining:
-        if word == "":
+        if word == "":  
             pass
         else:
             numWords += 1
@@ -50,10 +49,6 @@ for dict in bookDictionaries:
     for w in dict.keys():
         if w not in bagOfWords:
             bagOfWords.append(w)
-# for word in bagOfWords:
-#     for dict in bookDictionaries:
-#         if word not in dict:
-#             dict[word] = 0 
 
 # make an array of priors for each book
 bookPriors = []
@@ -74,15 +69,6 @@ def createVector (bag , page, dict):
     # print(x , " words found in book")
     return vector           
 
-# vectors = []
-# vectors.append(createVector(bagOfWords, pages[1], bookDictionaries[0]))
-# vectors.append(createVector(bagOfWords, pages[1], bookDictionaries[1]))
-# vectors.append(createVector(bagOfWords, pages[1], bookDictionaries[2]))
-# vectors.append(createVector(bagOfWords, pages[1], bookDictionaries[3]))
-# vectors.append(createVector(bagOfWords, pages[1], bookDictionaries[4]))
-# vectors.append(createVector(bagOfWords, pages[1], bookDictionaries[5]))
-# vectors.append(createVector(bagOfWords, pages[1], bookDictionaries[6]))
-
 # now to calculate the probability given a message
 def probabilitySentenceGivenBook(vector, bag ,  dict, totalWords):
     prob = 1
@@ -90,37 +76,28 @@ def probabilitySentenceGivenBook(vector, bag ,  dict, totalWords):
         if vector[index] == 1:
             # print(prob)
             if bag[index] not in dict or dict[bag[index]] ==0 :
-                prob +=   abs(math.log(1 / (totalWords + 2),10))
+                prob +=   abs(math.log(285/ (totalWords+570),10))
             else:  
                 prob += abs(math.log(dict[bag[index]] / totalWords,10))
         else:
             # print(prob)
             if bag[index] not in dict or dict[bag[index]] ==0 :
-                prob +=  abs(math.log( 1 - 1 / (totalWords + 2),10))
+                prob +=  abs(math.log( 1 - 285 / (totalWords + 570),10))
             else:    
                 prob +=  abs( math.log(1 - dict[bag[index]] / totalWords,10))
     return prob
 
-bookIndex = -1
-maxProb = 0
 
 # the following loop is to get the numerator of the Naive Bayes Classifier in logs
 # whichever index has the maximum numerator will have the highest probability
 # this is because all the numerator logs will be subtracted by the same logged denominator
 
-# for i in range(7):
-#     probConditional = probabilitySentenceGivenBook(vectors[i],bagOfWords, bookDictionaries[i], bookTotalWords[i])
-#     probNumerator = probConditional + abs(math.log(bookPriors[i]))
-#     if probNumerator > maxProb:
-#         maxProb = probNumerator
-#         bookIndex = i
-
-# print("Predicted Book: ", bookIndex )
 
 # Create a function that will take in the test-pages-array and loop through it counting how many times it gets the prediction right
 def testFunction(bag,dictionaries,testBookPages, bookTotalWords,  bookPriors):
     correctPredicts = 0
     wrongPredicts = 0
+    confusionMatrix = np.zeros((7,7))
     for k in range(len(testBookPages)):
         for j in range(len(testBookPages[k])):
 
@@ -142,31 +119,17 @@ def testFunction(bag,dictionaries,testBookPages, bookTotalWords,  bookPriors):
                     maxP = p
                     predictedBook = i
             if predictedBook == k:
+                confusionMatrix[k][k] += 1
                 correctPredicts +=1
             else:
+                confusionMatrix[k][predictedBook] += 1
                 wrongPredicts +=1
+    print(confusionMatrix)            
     return correctPredicts,wrongPredicts    
 
 
 
 
-print(testFunction(bagOfWords,bookDictionaries,testPages,bookTotalWords,bookPriors))
-
-
-
-# for b in bookDictionaries:
-#     if "scuttled" in b:
-#         print("True")
-#     else:
-#         print("False")
-# t = True
-# for dict in bookDictionaries:
-#     for w in dict.keys():
-#         if w not in bagOfWords:
-#             bagOfWords.append(w)
-
-# for dict in bookDictionaries:
-#     for w in dict.keys():
-#         if w not in bagOfWords:
-#             t = False            
-# print(t)            
+right,wrong = testFunction(bagOfWords,bookDictionaries,testPages,bookTotalWords,bookPriors)
+print(right,wrong)
+print("Accuracy: ", right / (right+wrong))
