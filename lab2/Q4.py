@@ -16,12 +16,12 @@ for i in range(1,8):
     books = np.append(books,file.read())
 
     pages = books[i-1].split("\n") # get the pages of the ith book
-    testPages.append(pages[round(len(pages)*0.8):]) #last 20% of a book are reserved for testing.
+    testPages.append(pages[round(len(pages)*0.9):]) #last 20% of a book are reserved for testing.
 
     words = books[i-1].split(" ")
     
     size = len(words)
-    wordsTraining = words[:round(size*1)] #first 80% of a book are reserved for testing
+    wordsTraining = words[:round(size*0.8)] #first 80% of a book are reserved for testing
     dictionary = {} # initialise dictionary for each book
     numWords = 0
 
@@ -76,13 +76,13 @@ def probabilitySentenceGivenBook(vector, bag ,  dict, totalWords):
         if vector[index] == 1:
             # print(prob)
             if bag[index] not in dict or dict[bag[index]] ==0 :
-                prob +=   abs(math.log(285/ (totalWords+570),10))
+                prob +=   abs(math.log(1/ (totalWords+570),10))
             else:  
                 prob += abs(math.log(dict[bag[index]] / totalWords,10))
         else:
             # print(prob)
             if bag[index] not in dict or dict[bag[index]] ==0 :
-                prob +=  abs(math.log( 1 - 285 / (totalWords + 570),10))
+                prob +=  abs(math.log( 1 - 1/ (totalWords + 570),10))
             else:    
                 prob +=  abs( math.log(1 - dict[bag[index]] / totalWords,10))
     return prob
